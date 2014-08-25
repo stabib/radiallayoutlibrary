@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
    <declare-styleable name="RadialLayout">
-       <attr name="radius" format="dimension"></attr>
+       <attr name="radius" format="dimension">
+           <enum name="fitShortestWidth" value="-1"></enum>
+       </attr>
        <attr name="firstChildOffsetAngle" format="integer"></attr>
        <attr name="hasCenterChild" format="boolean"></attr>
    </declare-styleable>     

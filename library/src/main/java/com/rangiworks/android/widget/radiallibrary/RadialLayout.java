@@ -11,7 +11,6 @@ import android.view.ViewGroup;
  */
 public class RadialLayout extends ViewGroup {
     private static final String TAG = RadialLayout.class.getSimpleName();
-    private static final String CENTER_CHILD_ID_NAME = "rl_center_child";
     private static final int FIRST_CHILD_ANGLE_OFFSET = 270;
 
     private int mRadius;
@@ -32,7 +31,7 @@ public class RadialLayout extends ViewGroup {
         super(context, attrs, defStyleAttr);
 
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.RadialLayout);
-        mRadius = array.getDimensionPixelSize(R.styleable.RadialLayout_radius, 0);
+        mRadius = array.getLayoutDimension(R.styleable.RadialLayout_radius, 0);
         mFirstChildAngleOffset = array.getInt(R.styleable.RadialLayout_firstChildOffsetAngle, FIRST_CHILD_ANGLE_OFFSET);
         mHasCenterChild = array.getBoolean(R.styleable.RadialLayout_hasCenterChild, false);
 
@@ -51,8 +50,10 @@ public class RadialLayout extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-
         int count = getChildCount();
+
+        int specWidth = MeasureSpec.getSize(widthMeasureSpec);
+        int specHeight = MeasureSpec.getSize(heightMeasureSpec);
 
         // Measurement will ultimately be computing these values.
         int maxHeight = 0;
@@ -62,6 +63,11 @@ public class RadialLayout extends ViewGroup {
         int centerChildHeight = 0;
         int centerChildWidth = 0;
 
+        int paddingTop = getPaddingTop();
+        int paddingBottom = getPaddingBottom();
+        int paddingLeft = getPaddingLeft();
+        int paddingRight = getPaddingRight();
+
         // Iterate through all children, measuring them and computing our dimensions
         // from their size.
         for (int i = 0; i < count; i++) {
@@ -69,7 +75,6 @@ public class RadialLayout extends ViewGroup {
             if (child.getVisibility() != GONE) {
                 // Measure the child
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-
 
                 //only update the max height if this view isn't the center view, but watch out if radius is zero, the r=0 is handled further down
                 if(!mHasCenterChild || i > 0) {
@@ -83,9 +88,17 @@ public class RadialLayout extends ViewGroup {
             }
         }
 
+        if(mRadius == LayoutParams.FIT_SHORTEST_WIDTH){ //take the parents size and adjust the radius accordingly
+            if(specHeight < specWidth){
+                mRadius = (specHeight - maxHeight) / 2;
+            }else{
+                mRadius = (specWidth - maxWidth ) / 2;
+            }
+        }
+
         // Check against our minimum height and width
-        maxHeight = Math.max(maxHeight + mRadius * 2, getSuggestedMinimumHeight());
-        maxWidth = Math.max(maxWidth + mRadius * 2, getSuggestedMinimumWidth());
+        maxHeight = Math.max(maxHeight + mRadius * 2 +  paddingTop + paddingBottom , getSuggestedMinimumHeight());
+        maxWidth = Math.max(maxWidth + mRadius * 2 + paddingLeft + paddingRight, getSuggestedMinimumWidth());
 
         //let's make sure that the max height and width is at least as big as our center child
         maxHeight = Math.max(maxHeight, centerChildHeight);
@@ -105,6 +118,10 @@ public class RadialLayout extends ViewGroup {
         int currentAngle = mFirstChildAngleOffset; //angle offset to place first child
         int angleAmongChildren = 0; //the angle between two children
 
+        int paddingTop = getPaddingTop();
+        int paddingBottom = getPaddingBottom();
+        int paddingLeft = getPaddingLeft();
+        int paddingRight = getPaddingRight();
 
         if(mHasCenterChild) {
             int c = childCount - 1;
@@ -207,6 +224,8 @@ public class RadialLayout extends ViewGroup {
     }
 
     public static class LayoutParams extends MarginLayoutParams{
+
+        public static final int FIT_SHORTEST_WIDTH = -1;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
