@@ -165,6 +165,33 @@ public class RadialLayout extends ViewGroup {
 
     }
 
+    public int getRadius() {
+        return mRadius;
+    }
+
+    public void setRadius(int mRadius) {
+        this.mRadius = mRadius;
+        invalidate();
+    }
+
+    public boolean hasCenterChild() {
+        return mHasCenterChild;
+    }
+
+    public void setHasCenterChild(boolean mHasCenterChild) {
+        this.mHasCenterChild = mHasCenterChild;
+        invalidate();
+    }
+
+    public int getFirstChildAngleOffset() {
+        return mFirstChildAngleOffset;
+    }
+
+    public void setFirstChildAngleOffset(int mFirstChildAngleOffset) {
+        this.mFirstChildAngleOffset = mFirstChildAngleOffset;
+        invalidate();
+    }
+
     @Override
     public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new LayoutParams(getContext(), attrs);
