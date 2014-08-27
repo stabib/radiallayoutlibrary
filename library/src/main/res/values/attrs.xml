@@ -4,7 +4,17 @@
        <attr name="radius" format="dimension">
            <enum name="fitShortestWidth" value="-1"></enum>
        </attr>
+       <attr name="isCentered" format="boolean"></attr>
        <attr name="firstChildOffsetAngle" format="integer"></attr>
-       <attr name="hasCenterChild" format="boolean"></attr>
    </declare-styleable>     
+   
+   <declare-styleable name="FancyRadialLayout">
+       <attr name="drawCirclePerimeter" format="boolean"></attr>
+       <attr name="circlePaintColor" format="color"></attr>
+       <attr name="circlePaintWidth" format="dimension"></attr>
+       <attr name="circlePaintShadowColor" format="color"></attr>
+       <attr name="circlePaintShadowDx" format="dimension"></attr>
+       <attr name="circlePaintShadowDy" format="dimension"></attr>
+       <attr name="circlePaintShadowRadius" format="dimension"></attr>
+   </declare-styleable>
 </resources>
