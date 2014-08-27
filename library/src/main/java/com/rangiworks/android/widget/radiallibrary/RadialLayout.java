@@ -126,9 +126,10 @@ public class RadialLayout extends ViewGroup {
 
         //find the number of children that will be centered
         int numCenteredChildren = getNumCenteredChildren();
+        int childCountExcludingGone = getNumVisibleChildren();
 
-        if((childCount - numCenteredChildren) > 0){
-            angleAmongChildren = 360 / (childCount - numCenteredChildren);
+        if((childCountExcludingGone - numCenteredChildren) > 0){
+            angleAmongChildren = 360 / (childCountExcludingGone - numCenteredChildren);
         }
 
         int viewCenterX = (r - l) / 2;
@@ -178,14 +179,36 @@ public class RadialLayout extends ViewGroup {
 
     }
 
+    /**
+     * Get the number of children not GONE
+     * @return
+     */
+    private int getNumVisibleChildren() {
+        int childCount = getChildCount();
+        int num = 0;
+        for(int i =0; i < childCount; i++){
+            if(getChildAt(i).getVisibility() != View.GONE)
+                ++num;
+        }
+        return num;
+    }
+
+    /**
+     * Get the number of centered children excluding the ones that are gone
+     * @return Number of centered children excluding GONE
+     */
     protected int getNumCenteredChildren(){
         int c = getChildCount();
         int numCenteredChildren = 0;
         LayoutParams lp;
+        View child;
         for(int i = 0; i < c; i++){
-            lp = (LayoutParams)getChildAt(i).getLayoutParams();
-            if(lp.mIsCentered)
-                ++numCenteredChildren;
+             child = getChildAt(i);
+            if(child.getVisibility() != View.GONE) {
+                lp = (LayoutParams) child.getLayoutParams();
+                if (lp.mIsCentered)
+                    ++numCenteredChildren;
+            }
         }
 
         return numCenteredChildren;
