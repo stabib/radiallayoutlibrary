@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/RadialLayoutLibrary.iml" filepath="$PROJECT_DIR$/RadialLayoutLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sample/RadialLayoutSample.iml" filepath="$PROJECT_DIR$/sample/RadialLayoutSample.iml" />
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/radiallayoutlibrary.iml" filepath="$PROJECT_DIR$/radiallayoutlibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
     </modules>
   </component>
 </project>

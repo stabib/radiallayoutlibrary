@@ -33,7 +33,7 @@ public class RadialLayout extends ViewGroup {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.RadialLayout);
         mRadius = array.getLayoutDimension(R.styleable.RadialLayout_radius, 0);
         mFirstChildAngleOffset = array.getInt(R.styleable.RadialLayout_firstChildOffsetAngle, FIRST_CHILD_ANGLE_OFFSET);
-        mHasCenterChild = array.getBoolean(R.styleable.RadialLayout_hasCenterChild, false);
+//        mHasCenterChild = array.getBoolean(R.styleable.RadialLayout_hasCenterChild, false);
 
         array.recycle();
     }
@@ -60,8 +60,8 @@ public class RadialLayout extends ViewGroup {
         int maxWidth = 0;
         int childState = 0;
 
-        int centerChildHeight = 0;
-        int centerChildWidth = 0;
+        int maxCenterChildHeight = 0;
+        int maxCenterChildWidth = 0;
 
         int paddingTop = getPaddingTop();
         int paddingBottom = getPaddingBottom();
@@ -72,17 +72,18 @@ public class RadialLayout extends ViewGroup {
         // from their size.
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
+            LayoutParams lp = (LayoutParams)child.getLayoutParams();
             if (child.getVisibility() != GONE) {
                 // Measure the child
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
 
                 //only update the max height if this view isn't the center view, but watch out if radius is zero, the r=0 is handled further down
-                if(!mHasCenterChild || i > 0) {
+                if(!lp.mIsCentered) {
                     maxHeight = Math.max(maxHeight, child.getMeasuredHeight());
                     maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
                 }else{
-                    centerChildHeight = child.getMeasuredHeight();
-                    centerChildWidth = child.getMeasuredWidth();
+                    maxCenterChildHeight = Math.max(child.getMeasuredHeight(), maxCenterChildHeight);
+                    maxCenterChildWidth = Math.max(child.getMeasuredWidth(), maxCenterChildWidth);
                 }
                 childState = combineMeasuredStates(childState, child.getMeasuredState());
             }
@@ -101,8 +102,8 @@ public class RadialLayout extends ViewGroup {
         maxWidth = Math.max(maxWidth + mRadius * 2 + paddingLeft + paddingRight, getSuggestedMinimumWidth());
 
         //let's make sure that the max height and width is at least as big as our center child
-        maxHeight = Math.max(maxHeight, centerChildHeight);
-        maxWidth = Math.max(maxWidth, centerChildWidth);
+        maxHeight = Math.max(maxHeight, maxCenterChildHeight);
+        maxWidth = Math.max(maxWidth, maxCenterChildWidth);
 
         // Report our final dimensions.
         setMeasuredDimension(resolveSizeAndState(maxWidth , widthMeasureSpec, childState),
@@ -123,15 +124,12 @@ public class RadialLayout extends ViewGroup {
         int paddingLeft = getPaddingLeft();
         int paddingRight = getPaddingRight();
 
-        if(mHasCenterChild) {
-            int c = childCount - 1;
-            if(c > 0) {
-                angleAmongChildren = 360 / c;
-            }
-        }else{
-            if(childCount > 0) {
-                angleAmongChildren = 360 / childCount;
-            }
+        //find the number of children that will be centered
+        int numCenteredChildren = getNumCenteredChildren();
+        int childCountExcludingGone = getNumVisibleChildren();
+
+        if((childCountExcludingGone - numCenteredChildren) > 0){
+            angleAmongChildren = 360 / (childCountExcludingGone - numCenteredChildren);
         }
 
         int viewCenterX = (r - l) / 2;
@@ -149,13 +147,12 @@ public class RadialLayout extends ViewGroup {
 
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
-
             int cl, ct, cr, cb; //left, top, right, bottoms
 
             if(child.getVisibility() != View.GONE) {
 
-                //place the center child in the center
-                if (mHasCenterChild && i == 0) {
+
+                if (lp.mIsCentered) { //place the center child in the center
                     centerX = viewCenterX;
                     centerY = viewCenterY;
 
@@ -182,21 +179,47 @@ public class RadialLayout extends ViewGroup {
 
     }
 
+    /**
+     * Get the number of children not GONE
+     * @return
+     */
+    private int getNumVisibleChildren() {
+        int childCount = getChildCount();
+        int num = 0;
+        for(int i =0; i < childCount; i++){
+            if(getChildAt(i).getVisibility() != View.GONE)
+                ++num;
+        }
+        return num;
+    }
+
+    /**
+     * Get the number of centered children excluding the ones that are gone
+     * @return Number of centered children excluding GONE
+     */
+    protected int getNumCenteredChildren(){
+        int c = getChildCount();
+        int numCenteredChildren = 0;
+        LayoutParams lp;
+        View child;
+        for(int i = 0; i < c; i++){
+             child = getChildAt(i);
+            if(child.getVisibility() != View.GONE) {
+                lp = (LayoutParams) child.getLayoutParams();
+                if (lp.mIsCentered)
+                    ++numCenteredChildren;
+            }
+        }
+
+        return numCenteredChildren;
+    }
+
     public int getRadius() {
         return mRadius;
     }
 
     public void setRadius(int mRadius) {
         this.mRadius = mRadius;
-        invalidate();
-    }
-
-    public boolean hasCenterChild() {
-        return mHasCenterChild;
-    }
-
-    public void setHasCenterChild(boolean mHasCenterChild) {
-        this.mHasCenterChild = mHasCenterChild;
         invalidate();
     }
 
@@ -227,8 +250,13 @@ public class RadialLayout extends ViewGroup {
 
         public static final int FIT_SHORTEST_WIDTH = -1;
 
+        private boolean mIsCentered;
+
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
+            TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.RadialLayout);
+            mIsCentered = a.getBoolean(R.styleable.RadialLayout_isCentered, false);
+            a.recycle();
         }
 
         public LayoutParams(int width, int height) {
@@ -241,6 +269,14 @@ public class RadialLayout extends ViewGroup {
 
         public LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
+        }
+
+        public boolean isCentered() {
+            return mIsCentered;
+        }
+
+        public void setCentered(boolean isCentered) {
+            this.mIsCentered = isCentered;
         }
     }
 }

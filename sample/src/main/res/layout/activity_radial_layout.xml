@@ -10,19 +10,15 @@
     tools:context=".SampleActivity">
 
     <com.rangiworks.android.widget.radiallibrary.RadialLayout
-        android:layout_width="wrap_content"
+        android:background="#ff8800"
+        android:id="@+id/radial_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:hasCenterChild="true"
-        app:radius="fitShortestWidth">
+        android:animateLayoutChanges="true"
+        app:radius="100dp"
+        app:firstChildOffsetAngle="90">
 
         <!-- Center child is always the first child-->
-        <TextView
-            android:id="@+id/center_child"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1"
-            android:textSize="28sp"
-            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -64,6 +60,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="7"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:isCentered="true"
+            android:text="1"
             android:textSize="28sp"
             android:textStyle="bold" />
 
