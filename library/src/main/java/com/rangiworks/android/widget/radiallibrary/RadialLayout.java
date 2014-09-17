@@ -3,6 +3,7 @@ package com.rangiworks.android.widget.radiallibrary;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 public class RadialLayout extends ViewGroup {
     private static final String TAG = RadialLayout.class.getSimpleName();
     private static final int FIRST_CHILD_ANGLE_OFFSET = 270;
+
+    private boolean mFitShortestWidth;
 
     private int mRadius;
 
@@ -32,6 +35,7 @@ public class RadialLayout extends ViewGroup {
 
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.RadialLayout);
         mRadius = array.getLayoutDimension(R.styleable.RadialLayout_radius, 0);
+        mFitShortestWidth  = (mRadius == LayoutParams.FIT_SHORTEST_WIDTH);
         mFirstChildAngleOffset = array.getInt(R.styleable.RadialLayout_firstChildOffsetAngle, FIRST_CHILD_ANGLE_OFFSET);
 //        mHasCenterChild = array.getBoolean(R.styleable.RadialLayout_hasCenterChild, false);
 
@@ -89,7 +93,7 @@ public class RadialLayout extends ViewGroup {
             }
         }
 
-        if(mRadius == LayoutParams.FIT_SHORTEST_WIDTH){ //take the parents size and adjust the radius accordingly
+        if(mFitShortestWidth){ //take the parents size and adjust the radius accordingly
             if(specHeight < specWidth){
                 mRadius = (specHeight - maxHeight) / 2;
             }else{
@@ -220,6 +224,7 @@ public class RadialLayout extends ViewGroup {
 
     public void setRadius(int mRadius) {
         this.mRadius = mRadius;
+        mFitShortestWidth = (mRadius == LayoutParams.FIT_SHORTEST_WIDTH);
         invalidate();
     }
 
