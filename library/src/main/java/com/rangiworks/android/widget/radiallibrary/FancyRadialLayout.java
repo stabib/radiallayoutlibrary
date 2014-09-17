@@ -1,5 +1,6 @@
 package com.rangiworks.android.widget.radiallibrary;
 
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -19,20 +20,17 @@ public class FancyRadialLayout extends RadialLayout {
     private static final int DEFAULT_PAINT_WIDTH = 2;
 
     private static final int DEFAULT_SHADOW_WIDTH = 1;
-    private final int mCirclePaintShadowDy;
-    private final int mCirclePaintShadowRadius;
 
     private boolean mDrawCirclePerimter;
 
+    private Paint mCirclePaint;
     private int mCirclePaintColor;
-
     private int mCirclePaintWidth;
-
     private int mCirclePaintShadowColor;
 
     private int mCirclePaintShadowDx;
-
-    private Paint mCirclePaint;
+    private int mCirclePaintShadowDy;
+    private int mCirclePaintShadowRadius;
 
     private ImageView mCircleImageView;
 
@@ -95,5 +93,18 @@ public class FancyRadialLayout extends RadialLayout {
         float y = getHeight() / 2;
 
         c.drawCircle(x, y, getRadius(), mCirclePaint);
+    }
+
+    public boolean isDrawCirclePerimter() {
+        return mDrawCirclePerimter;
+    }
+
+    public void setDrawCirclePerimter(boolean drawCirclePerimter) {
+        mDrawCirclePerimter = drawCirclePerimter;
+    }
+
+    public static class CustomLayoutTransition extends LayoutTransition{
+
+
     }
 }

@@ -9,14 +9,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".SampleActivity">
 
-    <com.rangiworks.android.widget.radiallibrary.FancyRadialLayout
-        android:background="#ff0000"
+    <com.rangiworks.android.widget.radiallibrary.RadialLayout
+        android:background="#ff8800"
+        android:id="@+id/radial_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         app:radius="100dp"
-        app:drawCirclePerimeter="true"
-        app:circlePaintColor="#FFFFFF"
-        app:circlePaintWidth="5dp">
+        app:firstChildOffsetAngle="90">
 
         <!-- Center child is always the first child-->
 
@@ -64,13 +64,19 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@id/center_child_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="8"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:isCentered="true"
             android:text="1"
             android:textSize="28sp"
             android:textStyle="bold" />
 
-    </com.rangiworks.android.widget.radiallibrary.FancyRadialLayout>
+    </com.rangiworks.android.widget.radiallibrary.RadialLayout>
 
 </RelativeLayout>
